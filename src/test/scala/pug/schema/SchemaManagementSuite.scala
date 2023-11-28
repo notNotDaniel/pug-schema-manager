@@ -29,12 +29,11 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
   test("Fail on invalid SQL") {
     interceptIO[Exception] {
       object brokenComponent extends SchemaComponent("broken") {
-        override def currentVersion = 1
+        def currentVersion = 1
 
-        override val currentSchema = Seq(fr"""
+        val currentSchema = sql"""
             This is not valid SQL!
-        """.update.run.map(_ => ())
-        )
+        """
       }
 
       schemaManagement.initializeComponent(brokenComponent)
@@ -47,10 +46,9 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
       object testComponent extends SchemaComponent("test") {
         override def currentVersion = 1
 
-        override val currentSchema = Seq(fr"""
+        override val currentSchema = sql"""
             CREATE TABLE foo (what TEXT NOT NULL);
-        """.update.run.map(_ => ())
-        )
+        """
       }
 
       schemaManagement.initializeComponent(testComponent)
@@ -71,10 +69,9 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
       object testComponent extends SchemaComponent("test") {
         override def currentVersion = 2
 
-        override val currentSchema = Seq(fr"""
+        override val currentSchema = sql"""
             CREATE TABLE baz (what TEXT NOT NULL);
-        """.update.run.map(_ => ())
-        )
+        """
       }
 
       schemaManagement.initializeComponent(testComponent)
@@ -87,16 +84,15 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
       object testComponent extends SchemaComponent("test") {
         override def currentVersion = 2
 
-        override val currentSchema = Seq(fr"""
+        override val currentSchema = sql"""
             CREATE TABLE baz (what TEXT NOT NULL);
-        """.update.run.map(_ => ())
-        )
+        """
+
 
         override val migrations = {
-          case (1, 2) => Seq(fr"""
+          case (1, 2) => sql"""
             this is not valid SQL!
-          """.update.run.map(_ => ())
-          )
+          """
         }
       }
 
@@ -110,16 +106,14 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
       object testComponent extends SchemaComponent("test") {
         override def currentVersion = 2
 
-        override val currentSchema = Seq(fr"""
+        override val currentSchema = sql"""
             CREATE TABLE baz (what TEXT NOT NULL);
-        """.update.run.map(_ => ())
-        )
+        """
 
         override val migrations = {
-          case (1, 2) => Seq(fr"""
+          case (1, 2) => sql"""
             ALTER TABLE foo RENAME TO baz
-          """.update.run.map(_ => ())
-          )
+          """
         }
       }
 
@@ -140,32 +134,30 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
       object testComponent extends SchemaComponent("test") {
         override def currentVersion = 5
 
-        override val currentSchema = Seq(fr"""
+        override val currentSchema = sql"""
             CREATE TABLE qux (what TEXT NOT NULL);
-        """.update.run.map(_ => ())
-        )
+        """
 
         override val migrations = {
-          case (1, 2) => Seq(fr"""
+          case (1, 2) => sql"""
             ALTER TABLE foo RENAME TO baz
-          """.update.run.map(_ => ())
-          )
-          case (2, 3) => Seq(fr"""
+          """
+
+          case (2, 3) => sql"""
             this is not valid SQL!
-          """.update.run.map(_ => ())
-          )
-          case (3, 4) => Seq(fr"""
+          """
+
+          case (3, 4) => sql"""
             this is not valid SQL!
-          """.update.run.map(_ => ())
-          )
-          case (2, 4) => Seq(fr"""
+          """
+
+          case (2, 4) => sql"""
             ALTER TABLE baz RENAME TO blark
-          """.update.run.map(_ => ())
-          )
-          case (4, 5) => Seq(fr"""
+          """
+
+          case (4, 5) => sql"""
             ALTER TABLE blark RENAME TO qux
-          """.update.run.map(_ => ())
-          )
+          """
         }
       }
 

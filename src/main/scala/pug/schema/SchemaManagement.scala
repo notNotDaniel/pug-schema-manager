@@ -3,19 +3,40 @@ package pug.schema
 import java.math.BigInteger
 import java.security.MessageDigest
 
-import scala.annotation.tailrec
-
 import cats.implicits._
 import doobie._
 import doobie.implicits._
 import org.typelevel.log4cats._
 import org.typelevel.log4cats.slf4j._
 
+/** One step in a migration */
+case class MigrationSteps(effects: ConnectionIO[Unit]*) // FIXME: replace with any
+
+object MigrationSteps {
+
+  /** Build a MigrationStep from a `Seq[ConnectionIO[Unit]]` */
+  implicit def toMigrationStep(steps: Seq[ConnectionIO[Unit]]) =
+    new MigrationSteps(steps: _*)
+
+  /** Build a MigrationStep from a `ConnectionIO[Unit]` */
+  implicit def toMigrationStep(step: ConnectionIO[Unit]) =
+    new MigrationSteps(step)
+
+  /** Build a MigrationStep from a `Fragment` which is executed as an UPDATE */
+  implicit def toMigrationStepFromFrag(step: Fragment) =
+    new MigrationSteps(step.update.run.map(_ => ()))
+
+  /** Build a MigrationStep from a `Seq[Fragment]` where each fragment is executed as an UPDATE */
+  implicit def toMigrationStepFromFrags(steps: Seq[Fragment]) = {
+    val effects: Seq[ConnectionIO[Unit]] = steps.map(step => step.update.run.map(_ => ()))
+    new MigrationSteps(effects: _*)
+  }
+}
+
+
 /** Definition of the current version of a part of the schema */
 abstract class SchemaComponent(val component: String) {
   val log: SelfAwareStructuredLogger[ConnectionIO] = LoggerFactory[ConnectionIO].getLogger
-
-  type MigrationStep = Seq[ConnectionIO[Unit]]
 
   /** The DB-level schema which contains this component. This can be used, e.g. in PostgreSQL,
     * to further namespace components. It is not supported by some databased, e.g. MySQL, in
@@ -37,10 +58,10 @@ abstract class SchemaComponent(val component: String) {
     *
     * This is applied if bootstrapping the schema from scratch.
     */
-  val currentSchema: MigrationStep
+  val currentSchema: MigrationSteps
 
   /** Partial function from (fromVersion, toVersion) to the DB Actions required to migrate */
-  val migrations: PartialFunction[(Int, Int), MigrationStep] = PartialFunction.empty
+  val migrations: PartialFunction[(Int, Int), MigrationSteps] = PartialFunction.empty
 
   /** Get a name, prefixed with the DB schema name if necessary */
   protected def nameWithSchema(name: String):String =
@@ -65,8 +86,8 @@ abstract class SchemaComponent(val component: String) {
   }
 
   /** Execute a migration step by executing each SQL operation in sequence */
-  def executeStep(step: MigrationStep): ConnectionIO[Unit] = {
-    step.foldLeft(().pure[ConnectionIO]) { (io, sql) =>
+  def executeStep(step: MigrationSteps): ConnectionIO[Unit] = {
+    step.effects.foldLeft(().pure[ConnectionIO]) { (io, sql) =>
       io.flatMap(_ => sql)
     }.map(_ => ())
   }
