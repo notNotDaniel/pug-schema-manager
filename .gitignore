@@ -1,0 +1,7 @@
+data
+**/target
+.bsp
+.idea
+queries.sql
+
+local.application.conf
