@@ -1,4 +1,4 @@
-ThisBuild / version := "0.2.2"
+ThisBuild / version := "1.0.0"
 ThisBuild / organization := "works.pugcode"
 ThisBuild / scalaVersion := "2.13.6"
 
@@ -38,14 +38,5 @@ scalacOptions ++= Seq(
   "-deprecation",
   "-unchecked",
   "-language:postfixOps",
+  "-language:implicitConversions",
 )
-
-assembly / mainClass := Some("pug.tasks.TaskManagerMonolith")
-
-assembly / assemblyMergeStrategy := {
-    case PathList("module-info.class") => MergeStrategy.last
-    case path if path.endsWith("/module-info.class") => MergeStrategy.last
-    case x =>
-      val oldStrategy = (assembly / assemblyMergeStrategy).value
-      oldStrategy(x)
-  }
