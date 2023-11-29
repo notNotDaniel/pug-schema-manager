@@ -1,8 +1,8 @@
 package pug.schema
 
-import doobie._
 import doobie.implicits._
 import cats.effect.{ ExitCode, IO, IOApp }
+import pug.schema.TestHelpers._
 
 object Examples {
 
@@ -79,7 +79,7 @@ object Examples {
         // If we have not been able to advance from version 1, do some additional fixup,
         // then apply those steps.
         case (1, 3) =>
-          sql"""UPDATE cats SET ennui = CASE WHEN ennui <= 0 THEN null ELSE ennui END""" ++
+          sql"""UPDATE cats SET ennui = null WHERE ennui <= 0""" ++
           migrations((1,2)) ++
           migrations((2,3))
       }
@@ -89,10 +89,7 @@ object Examples {
 
 class RunExample(examples: SchemaComponent*) extends IOApp {
   val schemaManagement = new SchemaManagement()
-  val transactor = Transactor.fromDriverManager[IO](
-    "org.h2.Driver",
-    "jdbc:h2:mem:run-examples;USER=sa;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE"
-  )
+  def transactor = testTransactor("examples", true)
 
   def run(args: List[String] = List()): IO[ExitCode] =
     for {

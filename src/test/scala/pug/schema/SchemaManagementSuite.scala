@@ -2,16 +2,13 @@ package pug.schema
 
 import cats.effect.{IO, SyncIO}
 import munit.CatsEffectSuite
-
 import doobie._
 import doobie.implicits._
+import pug.schema.TestHelpers._
 
 class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker {
   val schemaManagement = new SchemaManagement()
-  val transactor = Transactor.fromDriverManager[IO](
-    "org.h2.Driver",
-    "jdbc:h2:mem:tests;USER=sa;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE"
-  )
+  val transactor = testTransactor("mgmtTests")
 
   test("Bootstrap schema-manager schema") {
     assertIO_ {

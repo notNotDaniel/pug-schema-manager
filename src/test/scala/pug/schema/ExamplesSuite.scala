@@ -2,14 +2,10 @@ package pug.schema
 
 import cats.effect.{ ExitCode, IO }
 import munit.CatsEffectSuite
-import doobie._
-import doobie.implicits._
+import pug.schema.TestHelpers._
 
 class ExamplesSuite extends CatsEffectSuite with doobie.munit.IOChecker {
-  val transactor = Transactor.fromDriverManager[IO](
-    "org.h2.Driver",
-    "jdbc:h2:mem:examples;USER=sa;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE"
-  )
+  def transactor = testTransactor("examples", true)
 
   test("Example step 1") {
     assertIO(RunStep1.run(), ExitCode.Success)
