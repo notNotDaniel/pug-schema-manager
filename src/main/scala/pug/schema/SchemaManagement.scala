@@ -12,7 +12,7 @@ class SchemaManagement(schema: Option[String] = None) {
   def schemaMetadataTableName = "schema_metadata"
 
   val createSchemaMetadataTable =
-    fr"""CREATE TABLE""" ++ Fragment.const (schemaMetadataTableName) ++ fr"""(
+    fr"""CREATE TABLE IF NOT EXISTS""" ++ Fragment.const (schemaMetadataTableName) ++ fr"""(
         component   VARCHAR PRIMARY KEY,
         version     INTEGER NOT NULL,
         min_compat  INTEGER NOT NULL,
