@@ -5,19 +5,13 @@ import munit.CatsEffectSuite
 
 import doobie._
 import doobie.implicits._
-import doobie.h2._
-import _root_.munit._
 
 class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker {
-
+  val schemaManagement = new SchemaManagement()
   val transactor = Transactor.fromDriverManager[IO](
     "org.h2.Driver",
-    "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE",
-    "sa",
-    ""
+    "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;USER=sa"
   )
-
-  val schemaManagement = new SchemaManagement()
 
   test("Bootstrap schema-manager schema") {
     assertIO_ {

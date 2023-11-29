@@ -74,6 +74,9 @@ class SchemaManagement(schema: Option[String] = None) {
           WHERE component = $componentName
     """).query[Int].option
 
+  def getComponentVersion(component: SchemaComponent): ConnectionIO[Option[Int]] =
+    getComponentVersion(component.component)
+
   protected def updateComponentVersion(componentName: String, ver: Int): ConnectionIO[Boolean] =
     (fr"UPDATE" ++ Fragment.const(schemaMetadataTableName) ++ fr"""
           SET version = $ver

@@ -99,4 +99,7 @@ abstract class SchemaComponent(val component: String) {
     val bytes = MessageDigest.getInstance("MD5").digest(schemaStr.getBytes("UTF-8"))
     String.format("%032x", new BigInteger(1, bytes))
   }
+
+  /** Display using the component name */
+  override def toString = s"$component Schema"
 }
