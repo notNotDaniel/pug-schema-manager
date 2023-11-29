@@ -5,7 +5,10 @@ import scala.language.implicitConversions
 import doobie.{ ConnectionIO, Fragment }
 
 /** One step in a migration */
-case class MigrationSteps(effects: ConnectionIO[Unit]*) // FIXME: replace with any
+case class MigrationSteps(val effects: ConnectionIO[Unit]*) {// FIXME: replace with any
+  def ++(other: MigrationSteps): MigrationSteps =
+    MigrationSteps(effects ++ other.effects: _*)
+}
 
 object MigrationSteps {
 
