@@ -1,8 +1,6 @@
 package pug.schema
 
-import cats.effect.{IO, SyncIO}
 import munit.CatsEffectSuite
-import doobie._
 import doobie.implicits._
 import pug.schema.TestHelpers._
 

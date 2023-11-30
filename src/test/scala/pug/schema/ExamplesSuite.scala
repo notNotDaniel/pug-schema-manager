@@ -1,6 +1,6 @@
 package pug.schema
 
-import cats.effect.{ ExitCode, IO }
+import cats.effect.ExitCode
 import munit.CatsEffectSuite
 import pug.schema.TestHelpers._
 
