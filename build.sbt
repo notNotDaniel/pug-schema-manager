@@ -1,4 +1,4 @@
-ThisBuild / version := "1.0.0"
+ThisBuild / version := "1.1.0-SNAPSHOT"
 ThisBuild / organization := "works.pugcode"
 ThisBuild / scalaVersion := "2.13.6"
 
