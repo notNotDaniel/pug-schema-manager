@@ -13,6 +13,9 @@ val Scala213Version = "2.13.11"
 ThisBuild / crossScalaVersions := Seq(Scala213Version)
 ThisBuild / scalaVersion := Scala213Version
 
+// Setup GitHub actions
+ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin("17"))
+
 // Dependency versions
 val catsEffectVersion = "3.4.10"
 val doobieVersion = "1.0.0-RC2"
@@ -54,8 +57,3 @@ scalacOptions ++= Seq(
   "-language:postfixOps",
   "-language:implicitConversions"
 )
-
-// Setup GitHub actions
-// A publish step is not setup... yet...
-ThisBuild / githubWorkflowPublishTargetBranches := Seq()
-ThisBuild / githubWorkflowJavaVersions += JavaSpec.temurin("17")
