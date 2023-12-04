@@ -23,7 +23,7 @@ import doobie.Transactor
 
 object TestHelpers {
   def testTransactor(name: String, random: Boolean = false) = {
-    val suffix = if (!random) "" else "-" + (1 to 16).map(_ => Random.nextPrintableChar()).mkString
+    val suffix = if (!random) "" else "-" + Random.alphanumeric.take(16).mkString
     val db = s"$name$suffix"
     Transactor.fromDriverManager[IO](
       "org.h2.Driver",
