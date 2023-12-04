@@ -1,12 +1,25 @@
-ThisBuild / version := "1.1.0-SNAPSHOT"
+ThisBuild / tlBaseVersion := "0.1"
 ThisBuild / organization := "works.pugcode"
-ThisBuild / scalaVersion := "2.13.6"
+ThisBuild / organizationName := "Pugilistic Codeworks"
+ThisBuild / startYear := Some(2020)
+ThisBuild / licenses := Seq(License.Apache2)
+ThisBuild / developers ++= List(
+  // your GitHub handle and name
+  tlGitHubDev("notNotDaniel", "Daniel Keller")
+)
 
-lazy val catsEffectVersion = "3.4.10"
-lazy val doobieVersion = "1.0.0-RC2"
+// TODO: scala 2.12 and scala3
+val Scala2Version = "2.13.11"
+ThisBuild / crossScalaVersions := Seq(Scala2Version)
+ThisBuild / scalaVersion := Scala2Version
+
+// Dependency versions
+val catsEffectVersion = "3.4.10"
+val doobieVersion = "1.0.0-RC2"
 
 lazy val root = (project in file(".")).settings(
   name := "pug-schema-manager",
+  description := "Functional schema management via Doobie",
   libraryDependencies ++= Seq(
     "org.typelevel" %% "cats-collections-core" % "0.9.6",
 
@@ -33,6 +46,7 @@ lazy val root = (project in file(".")).settings(
   )
 )
 
+// Set compiler options
 scalacOptions ++= Seq(
   "-feature",
   "-deprecation",
@@ -40,3 +54,8 @@ scalacOptions ++= Seq(
   "-language:postfixOps",
   "-language:implicitConversions",
 )
+
+// Setup GitHub actions
+// A publish step is not setup... yet...
+ThisBuild / githubWorkflowPublishTargetBranches := Seq()
+ThisBuild / githubWorkflowJavaVersions += JavaSpec.temurin("17")
