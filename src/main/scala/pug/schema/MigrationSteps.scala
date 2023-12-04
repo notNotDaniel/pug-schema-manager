@@ -1,7 +1,5 @@
 package pug.schema
 
-import scala.language.implicitConversions
-
 import doobie.{ ConnectionIO, Fragment }
 
 /** One step in a migration */

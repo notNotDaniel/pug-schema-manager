@@ -9,9 +9,9 @@ ThisBuild / developers ++= List(
 )
 
 // TODO: scala 2.12 and scala3
-val Scala2Version = "2.13.11"
-ThisBuild / crossScalaVersions := Seq(Scala2Version)
-ThisBuild / scalaVersion := Scala2Version
+val Scala213Version = "2.13.11"
+ThisBuild / crossScalaVersions := Seq(Scala213Version)
+ThisBuild / scalaVersion := Scala213Version
 
 // Dependency versions
 val catsEffectVersion = "3.4.10"

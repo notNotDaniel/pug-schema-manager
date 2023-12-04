@@ -54,7 +54,7 @@ abstract class SchemaComponent(val component: String) {
     def tryNext(next: Int): List[(Int,Int)] = {
       if (from >= next)
         List()
-      else if (!migrations.isDefinedAt(from, next))
+      else if (!migrations.isDefinedAt((from, next)))
         tryNext(next-1)
       else
         (from,next)::findMigrationPath(next, to)
