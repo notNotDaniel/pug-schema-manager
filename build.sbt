@@ -42,7 +42,7 @@ lazy val root = (project in file(".")).settings(
 
     // Logging
     "ch.qos.logback" % "logback-classic" % "1.4.5",
-    "org.typelevel" %% "log4cats-slf4j"   % "2.5.0",
+    "org.typelevel" %% "log4cats-slf4j" % "2.5.0"
   )
 )
 
@@ -52,7 +52,7 @@ scalacOptions ++= Seq(
   "-deprecation",
   "-unchecked",
   "-language:postfixOps",
-  "-language:implicitConversions",
+  "-language:implicitConversions"
 )
 
 // Setup GitHub actions

@@ -1,7 +1,23 @@
+/*
+ * Copyright 2020 Pugilistic Codeworks
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package pug.schema
 
 import doobie.implicits._
-import cats.effect.{ ExitCode, IO, IOApp }
+import cats.effect.{ExitCode, IO, IOApp}
 import pug.schema.TestHelpers._
 
 object Examples {
@@ -11,9 +27,9 @@ object Examples {
    */
   object Step1 {
     object PetsSchema extends SchemaComponent("pets") {
-        val currentVersion = 1
+      val currentVersion = 1
 
-        val currentSchema = sql"""
+      val currentSchema = sql"""
           CREATE TABLE cats (
             name CHARACTER VARYING PRIMARY KEY,
             ennui REAL
@@ -37,8 +53,8 @@ object Examples {
         );
       """
 
-      override val migrations = {
-        case (1, 2) => sql"""
+      override val migrations = { case (1, 2) =>
+        sql"""
           ALTER TABLE cats ADD COLUMN frolic_factor REAL;
           UPDATE cats SET frolic_factor = 1/ennui
         """
@@ -80,8 +96,8 @@ object Examples {
         // then apply those steps.
         case (1, 3) =>
           sql"""UPDATE cats SET ennui = null WHERE ennui <= 0""" ++
-          migrations((1,2)) ++
-          migrations((2,3))
+            migrations((1, 2)) ++
+            migrations((2, 3))
       }
     }
   }

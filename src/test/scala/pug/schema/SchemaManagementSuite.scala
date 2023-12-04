@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 Pugilistic Codeworks
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package pug.schema
 
 import munit.CatsEffectSuite
@@ -10,14 +26,16 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
 
   test("Bootstrap schema-manager schema") {
     assertIO_ {
-      schemaManagement.bootstrap()
+      schemaManagement
+        .bootstrap()
         .transact(transactor)
     }
   }
 
   test("Bootstrap schema-manager schema a second time") {
     assertIO_ {
-      schemaManagement.bootstrap()
+      schemaManagement
+        .bootstrap()
         .transact(transactor)
     }
   }
@@ -32,7 +50,8 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
         """
       }
 
-      schemaManagement.initializeComponent(brokenComponent)
+      schemaManagement
+        .initializeComponent(brokenComponent)
         .transact(transactor)
     }
   }
@@ -47,14 +66,16 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
         """
       }
 
-      schemaManagement.initializeComponent(testComponent)
+      schemaManagement
+        .initializeComponent(testComponent)
         .transact(transactor)
     }
   }
 
   test("Check initial schema version") {
     assertIO(
-      schemaManagement.getComponentVersion("test")
+      schemaManagement
+        .getComponentVersion("test")
         .transact(transactor),
       Some(1)
     )
@@ -70,7 +91,8 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
         """
       }
 
-      schemaManagement.initializeComponent(testComponent)
+      schemaManagement
+        .initializeComponent(testComponent)
         .transact(transactor)
     }
   }
@@ -84,15 +106,15 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
             CREATE TABLE baz (what TEXT NOT NULL);
         """
 
-
-        override val migrations = {
-          case (1, 2) => sql"""
+        override val migrations = { case (1, 2) =>
+          sql"""
             this is not valid SQL!
           """
         }
       }
 
-      schemaManagement.initializeComponent(testComponent)
+      schemaManagement
+        .initializeComponent(testComponent)
         .transact(transactor)
     }
   }
@@ -106,20 +128,22 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
             CREATE TABLE baz (what TEXT NOT NULL);
         """
 
-        override val migrations = {
-          case (1, 2) => sql"""
+        override val migrations = { case (1, 2) =>
+          sql"""
             ALTER TABLE foo RENAME TO baz
           """
         }
       }
 
-      schemaManagement.initializeComponent(testComponent)
+      schemaManagement
+        .initializeComponent(testComponent)
         .transact(transactor)
     }
   }
   test("Check updated schema version") {
     assertIO(
-      schemaManagement.getComponentVersion("test")
+      schemaManagement
+        .getComponentVersion("test")
         .transact(transactor),
       Some(2)
     )
@@ -157,14 +181,16 @@ class SchemaManagementSuite extends CatsEffectSuite with doobie.munit.IOChecker 
         }
       }
 
-      schemaManagement.initializeComponent(testComponent)
+      schemaManagement
+        .initializeComponent(testComponent)
         .transact(transactor)
     }
   }
 
   test("Check final schema version") {
     assertIO(
-      schemaManagement.getComponentVersion("test")
+      schemaManagement
+        .getComponentVersion("test")
         .transact(transactor),
       Some(5)
     )

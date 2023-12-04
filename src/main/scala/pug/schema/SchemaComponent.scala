@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 Pugilistic Codeworks
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package pug.schema
 
 import java.math.BigInteger
@@ -15,17 +31,16 @@ import org.typelevel.log4cats.slf4j._
 abstract class SchemaComponent(val component: String) {
   val log: SelfAwareStructuredLogger[ConnectionIO] = LoggerFactory[ConnectionIO].getLogger
 
-  /** The DB-level schema which contains this component. This can be used, e.g. in PostgreSQL,
-    * to further namespace components. It is not supported by some databased, e.g. MySQL, in
-    * which case it should be None
+  /** The DB-level schema which contains this component. This can be used, e.g. in PostgreSQL, to further namespace
+    * components. It is not supported by some databased, e.g. MySQL, in which case it should be None
     */
   def dbSchemaName: Option[String] = None
 
   /** Current version, running will attempt to advance the version to this point */
   def currentVersion: Int
 
-  /** Minimal version compatible with this one. This is set in the DB when we're upgraded,
-    * to allow older compatible apps (or instances of the same app) to continue running.
+  /** Minimal version compatible with this one. This is set in the DB when we're upgraded, to allow older compatible
+    * apps (or instances of the same app) to continue running.
     *
     * Defaults to the current version (no backwards comparability)
     */
@@ -41,23 +56,22 @@ abstract class SchemaComponent(val component: String) {
   val migrations: PartialFunction[(Int, Int), MigrationSteps] = PartialFunction.empty
 
   /** Get a name, prefixed with the DB schema name if necessary */
-  protected def nameWithSchema(name: String):String =
+  protected def nameWithSchema(name: String): String =
     dbSchemaName.map(schema => s"$schema.$name").getOrElse(name)
 
-  /** Collect the sequence of migrations that will be applied to bring the schema up to date.
-    * The sequence is constructed by starting with the current version and finding the migration
-    * which advances it as far as possible, then repeating from that new starting point, until
-    * the current version is reached.
+  /** Collect the sequence of migrations that will be applied to bring the schema up to date. The sequence is
+    * constructed by starting with the current version and finding the migration which advances it as far as possible,
+    * then repeating from that new starting point, until the current version is reached.
     */
-  protected def findMigrationPath(from: Int, to: Int): List[(Int,Int)] = {
+  protected def findMigrationPath(from: Int, to: Int): List[(Int, Int)] = {
     @tailrec
-    def tryNext(next: Int): List[(Int,Int)] = {
+    def tryNext(next: Int): List[(Int, Int)] = {
       if (from >= next)
         List()
       else if (!migrations.isDefinedAt((from, next)))
-        tryNext(next-1)
+        tryNext(next - 1)
       else
-        (from,next)::findMigrationPath(next, to)
+        (from, next) :: findMigrationPath(next, to)
     }
 
     tryNext(to)
@@ -67,9 +81,9 @@ abstract class SchemaComponent(val component: String) {
   def executeStep(steps: MigrationSteps): ConnectionIO[Unit] =
     steps.effects.sequence_
 
-  /** Apply all the actions (in sequence) required to migrate from the given version to the
-    * current one. Migrations are combined by searching for the migration from the starting version
-    * to the latest possible version, applying that version, and repeating from there.
+  /** Apply all the actions (in sequence) required to migrate from the given version to the current one. Migrations are
+    * combined by searching for the migration from the starting version to the latest possible version, applying that
+    * version, and repeating from there.
     */
   def migrateToCurrent(from: Int): ConnectionIO[Int] =
     findMigrationPath(from, currentVersion) match {
