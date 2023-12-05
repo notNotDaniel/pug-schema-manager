@@ -1,13 +1,14 @@
 ThisBuild / tlBaseVersion := "0.1"
 ThisBuild / organization := "works.pugcode"
 ThisBuild / organizationName := "Pugilistic Codeworks"
+ThisBuild / homepage := Some(new URL("https://schema-manager.pugcode.works"))
+ThisBuild / organizationHomepage := Some(new URL("https://pugcode.works"))
 ThisBuild / startYear := Some(2020)
 ThisBuild / licenses := Seq(License.Apache2)
 ThisBuild / developers ++= List(
   // your GitHub handle and name
   tlGitHubDev("notNotDaniel", "Daniel Keller")
 )
-ThisBuild / tlSitePublishBranch := Some("main")
 
 // TODO: scala 2.12 and scala3
 val Scala213Version = "2.13.11"
@@ -53,9 +54,17 @@ lazy val root = (project in file(".")).settings(
 lazy val docs = project
   .in(file("mdoc-project"))
   .dependsOn(root)
+  .enablePlugins(NoPublishPlugin)
   .enablePlugins(TypelevelSitePlugin)
   .settings(
-    tlSiteIsTypelevelProject := Some(TypelevelProject.Affiliate)
+    tlSitePublishBranch := Some("main"),
+    tlSiteHelium ~= { helium =>
+      import laika.helium.config._
+      helium.site
+        .topNavigationBar(
+          homeLink = IconLink.external("https://pugcode.works", HeliumIcon.home)
+        )
+    }
   )
 
 // Set compiler options

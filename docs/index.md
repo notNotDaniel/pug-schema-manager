@@ -1,4 +1,7 @@
-# Doobie Schema Manager
+# Pug Schema Manager
+
+A purely functional toolkit for using [Doobie](https://tpolecat.github.io/doobie/index.html)
+to manage your database schemata.
 
 ## Quickstart
 
@@ -9,12 +12,12 @@ libraryDependencies += "works.pugcode" % "pug-schema-manager" %% "@VERSION@"
 ```
 
 Define a schema component. This is a set of related SQL which should be versioned (and migrated)
-together. 
+together.
 
-At a minimum, this must include the `currentVersion` number (an integer which is 
+At a minimum, this must include the `currentVersion` number (an integer which is
 incremented each time a migration needs to be applied), and `currentSchema`, which is the complete
 definition of the current version of the schema, and will be applied if the schema does not yet
-exist in any form. 
+exist in any form.
 
 You may also define a set of migrations, which specify the incremental steps to migrate from previous
 versions of the schema to the current one. These are defined as a partial function from a
@@ -40,7 +43,7 @@ object PetsSchema extends SchemaComponent("pets") {
 
   override val migrations = {
     case (1, 2) => sql"""
-      ALTER TABLE cats ADD COLUMN frolic_factor REAL 
+      ALTER TABLE cats ADD COLUMN frolic_factor REAL
         CHECK (frolic_factor > 0);
     """
   }
@@ -74,10 +77,10 @@ object MyPetsApp extends IOApp {
 
 Migration steps (as well as the initial schema creation) can be specified in a variety of ways:
 
-* Ultimately, all migration steps reduce to a sequence of Doobie `ConnectionIO[Unit]`, which are 
+* Ultimately, all migration steps reduce to a sequence of Doobie `ConnectionIO[Unit]`, which are
   applied transactionally.
     ```scala mdoc
-    val stepX = 
+    val stepX =
       for {
         id <- sql"insert into my_table (name) values ($name)"
                 .update
