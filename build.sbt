@@ -54,6 +54,9 @@ lazy val docs = project
   .in(file("mdoc-project"))
   .dependsOn(root)
   .enablePlugins(TypelevelSitePlugin)
+  .settings(
+    tlSiteIsTypelevelProject := Some(TypelevelProject.Affiliate)
+  )
 
 // Set compiler options
 scalacOptions ++= Seq(
