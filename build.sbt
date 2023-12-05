@@ -7,6 +7,7 @@ ThisBuild / developers ++= List(
   // your GitHub handle and name
   tlGitHubDev("notNotDaniel", "Daniel Keller")
 )
+ThisBuild / tlSitePublishBranch := Some("main")
 
 // TODO: scala 2.12 and scala3
 val Scala213Version = "2.13.11"
@@ -48,6 +49,11 @@ lazy val root = (project in file(".")).settings(
     "org.typelevel" %% "log4cats-slf4j" % "2.5.0"
   )
 )
+
+lazy val docs = project
+  .in(file("mdoc-project"))
+  .dependsOn(root)
+  .enablePlugins(TypelevelSitePlugin)
 
 // Set compiler options
 scalacOptions ++= Seq(
