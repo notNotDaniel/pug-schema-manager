@@ -9,7 +9,7 @@ to manage your database schemata.
 
 ## Documentation
 
-Please see the [Documentation Site](https://notnotdaniel.github.io/pug-schema-manager/) for usage,
+Please see the [Documentation Site](https://schema-manager.pugcode.works) for usage,
 or check out the [Examples.scala](src/test/scala/pug/schema/Examples.scala) used in tests.
 
 If you have the repository checked out locally, you can run the examples using `sbt`
